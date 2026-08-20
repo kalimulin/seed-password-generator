@@ -31,7 +31,6 @@
           <SeparatorPicker v-model="separator" />
         </div>
 
-        <!-- Generate button -->
         <button
           id="generate-btn"
           class="btn btn-primary generate-btn"
@@ -41,7 +40,6 @@
           Generate Password
         </button>
 
-        <!-- Info card -->
         <div class="info-card">
           <Info :size="13" />
           <span>All generation happens locally in your browser. No data ever leaves your device.</span>
@@ -72,36 +70,43 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { watch } from 'vue'
 import { ShieldCheck, Zap, Info } from '@lucide/vue'
 
-import ThemeToggle         from './components/ThemeToggle.vue'
+import ThemeToggle          from './components/ThemeToggle.vue'
 import PhraseLengthSelector from './components/PhraseLengthSelector.vue'
-import SeparatorPicker     from './components/SeparatorPicker.vue'
-import SeedDisplay         from './components/SeedDisplay.vue'
-import PasswordOutput      from './components/PasswordOutput.vue'
+import SeparatorPicker      from './components/SeparatorPicker.vue'
+import SeedDisplay          from './components/SeedDisplay.vue'
+import PasswordOutput       from './components/PasswordOutput.vue'
 
-import { useBip39 }           from './composables/useBip39.js'
-import { usePasswordBuilder }  from './composables/usePasswordBuilder.js'
+import { useBip39 }          from './composables/useBip39'
+import { usePasswordBuilder } from './composables/usePasswordBuilder'
 
 const {
-  wordCount, words, error, isWeak, entropyBits,
-  generate, supportedLengths, WEAK_LENGTHS,
+  wordCount,
+  words,
+  entropyBits,
+  generate,
+  supportedLengths,
+  WEAK_LENGTHS,
 } = useBip39()
 
 const {
-  separator, password, passwordLength, charEntropy, copyToClipboard,
+  separator,
+  password,
+  passwordLength,
+  charEntropy,
+  copyToClipboard,
 } = usePasswordBuilder(words)
 
-// Auto-regenerate when word count changes (if phrase already exists)
+// Auto-regenerate on word count change if a phrase already exists
 watch(wordCount, () => {
   if (words.value.length > 0) generate()
 })
 </script>
 
 <style scoped>
-/* ── Shell layout ───────────────────────────────────────── */
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -111,7 +116,6 @@ watch(wordCount, () => {
   padding: 0 20px;
 }
 
-/* ── Header ─────────────────────────────────────────────── */
 .app-header {
   display: flex;
   align-items: center;
@@ -157,7 +161,6 @@ watch(wordCount, () => {
   margin-top: 2px;
 }
 
-/* ── Main grid ──────────────────────────────────────────── */
 .app-main {
   display: grid;
   grid-template-columns: 340px 1fr;
@@ -172,7 +175,6 @@ watch(wordCount, () => {
   gap: 16px;
 }
 
-/* ── Generate button ────────────────────────────────────── */
 .generate-btn {
   width: 100%;
   padding: 14px 24px;
@@ -189,7 +191,6 @@ watch(wordCount, () => {
   box-shadow: 0 0 32px var(--color-accent-glow), var(--shadow-lg);
 }
 
-/* ── Info card ──────────────────────────────────────────── */
 .info-card {
   display: flex;
   align-items: flex-start;
@@ -208,7 +209,6 @@ watch(wordCount, () => {
   margin-top: 1px;
 }
 
-/* ── Footer ─────────────────────────────────────────────── */
 .app-footer {
   padding: 24px 0;
   border-top: 1px solid var(--color-border);
@@ -224,7 +224,6 @@ watch(wordCount, () => {
   font-weight: 500;
 }
 
-/* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 760px) {
   .app-main {
     grid-template-columns: 1fr;
