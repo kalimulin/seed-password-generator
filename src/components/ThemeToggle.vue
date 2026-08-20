@@ -11,23 +11,29 @@
   </button>
 </template>
 
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed, type Component } from 'vue'
 import { Sun, Moon, Monitor } from '@lucide/vue'
-import { useTheme } from '../composables/useTheme.js'
+import { useTheme, type Theme } from '../composables/useTheme'
 
 const { theme, toggle } = useTheme()
 
-const icon = computed(() => {
-  if (theme.value === 'dark') return Moon
-  if (theme.value === 'light') return Sun
-  return Monitor
+const icon = computed<Component>(() => {
+  const icons: Record<Theme, Component> = {
+    dark:   Moon,
+    light:  Sun,
+    system: Monitor,
+  }
+  return icons[theme.value]
 })
 
-const label = computed(() => {
-  if (theme.value === 'dark') return 'Dark'
-  if (theme.value === 'light') return 'Light'
-  return 'Auto'
+const label = computed<string>(() => {
+  const labels: Record<Theme, string> = {
+    dark:   'Dark',
+    light:  'Light',
+    system: 'Auto',
+  }
+  return labels[theme.value]
 })
 </script>
 

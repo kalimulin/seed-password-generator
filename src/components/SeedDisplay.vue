@@ -6,10 +6,9 @@
         id="regenerate-btn"
         class="btn btn-ghost regen-btn"
         @click="$emit('generate')"
-        :disabled="!hasWords"
         title="Generate a new phrase"
       >
-        <RefreshCw :size="14" :class="{ spinning: spinning }" />
+        <RefreshCw :size="14" :class="{ spinning }" />
         Regenerate
       </button>
     </div>
@@ -32,23 +31,29 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import { RefreshCw, KeyRound } from '@lucide/vue'
 
-const props = defineProps({
-  words: { type: Array, required: true },
-})
+const props = defineProps<{
+  words: string[]
+}>()
 
-defineEmits(['generate'])
+defineEmits<{
+  generate: []
+}>()
 
-const hasWords = true // always enabled
-const spinning = ref(false)
+const spinning = ref<boolean>(false)
 
-watch(() => props.words, () => {
-  spinning.value = true
-  setTimeout(() => { spinning.value = false }, 500)
-})
+watch(
+  () => props.words,
+  () => {
+    spinning.value = true
+    setTimeout(() => {
+      spinning.value = false
+    }, 500)
+  },
+)
 </script>
 
 <style scoped>
@@ -74,7 +79,6 @@ watch(() => props.words, () => {
   gap: 6px;
 }
 
-/* Spinning animation */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -84,7 +88,6 @@ watch(() => props.words, () => {
   animation: spin 0.5s linear;
 }
 
-/* Empty state */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -104,7 +107,6 @@ watch(() => props.words, () => {
   opacity: 0.5;
 }
 
-/* Chips grid */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -144,7 +146,6 @@ watch(() => props.words, () => {
   letter-spacing: 0.01em;
 }
 
-/* TransitionGroup animations */
 .chip-list-enter-active {
   transition: all var(--transition-mid);
 }

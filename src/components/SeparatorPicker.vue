@@ -32,22 +32,34 @@
   </div>
 </template>
 
-<script setup>
-import { SEPARATOR_GROUPS } from '../composables/usePasswordBuilder.js'
+<script setup lang="ts">
+import { SEPARATOR_GROUPS } from '../composables/usePasswordBuilder'
 
-defineProps({
-  modelValue: { type: String, required: true },
-})
+defineProps<{
+  modelValue: string
+}>()
 
-defineEmits(['update:modelValue'])
+defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
-function charId(char) {
-  const map = {
-    '!': 'excl', '@': 'at', '#': 'hash', '$': 'dollar',
-    '%': 'pct', '^': 'caret', '&': 'amp', '*': 'star',
-    '.': 'dot', '_': 'underscore', '-': 'dash', '+': 'plus',
-  }
-  return map[char] ?? char
+const CHAR_ID_MAP: Record<string, string> = {
+  '!': 'excl',
+  '@': 'at',
+  '#': 'hash',
+  '$': 'dollar',
+  '%': 'pct',
+  '^': 'caret',
+  '&': 'amp',
+  '*': 'star',
+  '.': 'dot',
+  '_': 'underscore',
+  '-': 'dash',
+  '+': 'plus',
+}
+
+function charId(char: string): string {
+  return CHAR_ID_MAP[char] ?? char
 }
 </script>
 
@@ -123,7 +135,6 @@ function charId(char) {
   color: var(--color-accent);
 }
 
-/* Preview */
 .preview {
   display: flex;
   align-items: center;

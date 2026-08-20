@@ -16,7 +16,6 @@
       </button>
     </div>
 
-    <!-- Warning banner for weak lengths -->
     <Transition name="warn-slide">
       <div v-if="WEAK_LENGTHS.has(modelValue)" class="warn-badge" role="alert">
         <AlertTriangle :size="14" />
@@ -26,17 +25,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { AlertTriangle } from '@lucide/vue'
+import type { WordCount } from '../composables/useBip39'
 
-const props = defineProps({
-  modelValue: { type: Number, required: true },
-  supportedLengths: { type: Array, required: true },
-  WEAK_LENGTHS: { type: Set, required: true },
-  entropyBits: { type: Number, required: true },
-})
+const props = defineProps<{
+  modelValue: WordCount
+  supportedLengths: WordCount[]
+  WEAK_LENGTHS: ReadonlySet<WordCount>
+  entropyBits: number
+}>()
 
-defineEmits(['update:modelValue'])
+defineEmits<{
+  'update:modelValue': [value: WordCount]
+}>()
 </script>
 
 <style scoped>
@@ -109,7 +111,6 @@ defineEmits(['update:modelValue'])
   font-weight: 500;
 }
 
-/* Transition */
 .warn-slide-enter-active,
 .warn-slide-leave-active {
   transition: all var(--transition-mid);

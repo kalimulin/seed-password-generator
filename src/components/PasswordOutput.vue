@@ -2,7 +2,7 @@
   <div class="password-output">
     <div class="output-header">
       <span class="label">Generated Password</span>
-      <div class="badges" v-if="password">
+      <div v-if="password" class="badges">
         <span class="badge badge-length" title="Password length in characters">
           {{ passwordLength }} chars
         </span>
@@ -13,7 +13,7 @@
         >
           ~{{ charEntropy }} bits
         </span>
-        <span class="badge badge-strength" :class="strengthClass">
+        <span class="badge" :class="strengthClass">
           {{ strengthLabel }}
         </span>
       </div>
@@ -46,7 +46,7 @@
         <button
           id="copy-password-btn"
           class="btn-icon copy-btn"
-          :class="{ copied: copied }"
+          :class="{ copied }"
           :title="copied ? 'Copied!' : 'Copy to clipboard'"
           @click="handleCopy"
           :disabled="!password"
@@ -67,49 +67,50 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Eye, EyeOff, Copy, CheckCheck } from '@lucide/vue'
 
-const props = defineProps({
-  password:       { type: String,  required: true },
-  passwordLength: { type: Number,  required: true },
-  charEntropy:    { type: Number,  required: true },
-  copyToClipboard:{ type: Function,required: true },
-})
+const props = defineProps<{
+  password: string
+  passwordLength: number
+  charEntropy: number
+  copyToClipboard: () => Promise<boolean>
+}>()
 
-const visible = ref(false)
-const copied  = ref(false)
+const visible = ref<boolean>(false)
+const copied  = ref<boolean>(false)
 
-const maskedPassword = computed(() => '•'.repeat(props.passwordLength))
+const maskedPassword = computed<string>(() => '•'.repeat(props.passwordLength))
 
-// Entropy quality classes
-const entropyClass = computed(() => {
+const entropyClass = computed<string>(() => {
   const e = props.charEntropy
   if (e >= 100) return 'badge-entropy-high'
   if (e >= 60)  return 'badge-entropy-med'
   return 'badge-entropy-low'
 })
 
-const strengthLabel = computed(() => {
+const strengthLabel = computed<string>(() => {
   const e = props.charEntropy
   if (e >= 100) return 'Strong'
   if (e >= 60)  return 'Moderate'
   return 'Weak'
 })
 
-const strengthClass = computed(() => {
+const strengthClass = computed<string>(() => {
   const e = props.charEntropy
   if (e >= 100) return 'badge-strong'
   if (e >= 60)  return 'badge-moderate'
   return 'badge-weak'
 })
 
-async function handleCopy() {
+async function handleCopy(): Promise<void> {
   const ok = await props.copyToClipboard()
   if (ok) {
     copied.value = true
-    setTimeout(() => { copied.value = false }, 2200)
+    setTimeout(() => {
+      copied.value = false
+    }, 2200)
   }
 }
 </script>
@@ -133,7 +134,6 @@ async function handleCopy() {
   margin-bottom: 0;
 }
 
-/* Badges */
 .badges {
   display: flex;
   gap: 6px;
@@ -155,15 +155,14 @@ async function handleCopy() {
   border: 1px solid var(--color-border);
 }
 
-.badge-entropy-high  { background: rgba(34, 197, 94, 0.15);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
-.badge-entropy-med   { background: rgba(234,179,8,0.15);      color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
-.badge-entropy-low   { background: var(--color-warn-subtle);  color: var(--color-warn); border: 1px solid var(--color-warn-border); }
+.badge-entropy-high  { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.badge-entropy-med   { background: rgba(234,179,8,0.15);    color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+.badge-entropy-low   { background: var(--color-warn-subtle); color: var(--color-warn); border: 1px solid var(--color-warn-border); }
 
 .badge-strong   { background: rgba(34,197,94,0.15);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
 .badge-moderate { background: rgba(234,179,8,0.15);  color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
 .badge-weak     { background: var(--color-warn-subtle); color: var(--color-warn); border: 1px solid var(--color-warn-border); }
 
-/* Output field */
 .output-field {
   display: flex;
   align-items: center;
@@ -207,7 +206,6 @@ async function handleCopy() {
   font-style: italic;
 }
 
-/* Actions */
 .field-actions {
   display: flex;
   gap: 6px;
@@ -224,7 +222,6 @@ async function handleCopy() {
   color: var(--color-success);
 }
 
-/* Toast */
 .copy-toast {
   display: flex;
   align-items: center;
